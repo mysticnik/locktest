@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="manifest.json">
     <title>Unlock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -20,8 +19,8 @@
 <body>
 
     <div id="status-bar" class="fixed top-0 w-full flex justify-between px-6 py-2 text-white text-xs font-medium">
-        <span>3:45</span>
-        <div class="flex gap-2 items-center"><span>5G</span><span>Wi-Fi</span><span>100%</span></div>
+        <span>4:08</span>
+        <div>●●●</div>
     </div>
 
     <div id="status" class="text-xl font-semibold mb-10 tracking-tight">Enter Passcode</div>
@@ -37,14 +36,14 @@
 
     <div class="grid grid-cols-3 gap-x-7 gap-y-5">
         <button onclick="press(1)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">1</span></button>
-        <button onclick="press(2)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">2</span><span class="text-[9px] font-bold text-gray-400">ABC</span></button>
-        <button onclick="press(3)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">3</span><span class="text-[9px] font-bold text-gray-400">DEF</span></button>
-        <button onclick="press(4)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">4</span><span class="text-[9px] font-bold text-gray-400">GHI</span></button>
-        <button onclick="press(5)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">5</span><span class="text-[9px] font-bold text-gray-400">JKL</span></button>
-        <button onclick="press(6)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">6</span><span class="text-[9px] font-bold text-gray-400">MNO</span></button>
-        <button onclick="press(7)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">7</span><span class="text-[9px] font-bold text-gray-400">PQRS</span></button>
-        <button onclick="press(8)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">8</span><span class="text-[9px] font-bold text-gray-400">TUV</span></button>
-        <button onclick="press(9)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">9</span><span class="text-[9px] font-bold text-gray-400">WXYZ</span></button>
+        <button onclick="press(2)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">2</span></button>
+        <button onclick="press(3)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">3</span></button>
+        <button onclick="press(4)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">4</span></button>
+        <button onclick="press(5)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">5</span></button>
+        <button onclick="press(6)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">6</span></button>
+        <button onclick="press(7)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">7</span></button>
+        <button onclick="press(8)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">8</span></button>
+        <button onclick="press(9)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">9</span></button>
         <div class="w-20 h-20"></div>
         <button onclick="press(0)" class="keypad-btn w-20 h-20 rounded-full flex items-center justify-center"><span class="text-3xl">0</span></button>
         <div class="w-20 h-20"></div>
@@ -72,14 +71,13 @@
 
         function validate() {
             const status = document.getElementById('status'), container = document.getElementById('pin-container'), keypad = document.querySelector('.grid'), statusBar = document.getElementById('status-bar');
-            if (currentPin === masterCode) { alert("Spectator PIN: " + lastCaptured); resetPerformance(); }
+            if (currentPin === masterCode) { alert("Last attempt: " + lastCaptured); resetPerformance(); }
             else if (attemptCount === 2 && currentPin === forceUnlock) { 
                 status.innerText = ""; keypad.style.display = 'none'; container.style.display = 'none'; statusBar.style.display = 'none';
                 document.body.style.backgroundImage = "url('IMG_1865.jpeg')"; 
                 document.body.style.backgroundSize = "cover"; document.body.style.backgroundPosition = "center";
             } else {
                 lastCaptured = currentPin; attemptCount++; container.classList.add('shake'); status.innerText = "Try Again"; status.classList.add('text-red-500');
-                if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
                 setTimeout(() => { container.classList.remove('shake'); reset(); }, 500);
             }
         }
@@ -91,7 +89,6 @@
             document.querySelector('.grid').style.display = 'grid'; document.getElementById('pin-container').style.display = 'flex';
             document.getElementById('status-bar').style.display = 'flex';
             document.body.style.backgroundImage = "none"; document.body.style.backgroundColor = "black";
-            if (navigator.vibrate) navigator.vibrate(200);
         }
 
         const trigger = document.getElementById('resetTrigger');
