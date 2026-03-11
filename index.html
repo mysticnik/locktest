@@ -75,7 +75,7 @@
             if (currentPin === masterCode) { alert("Spectator PIN: " + lastCaptured); resetPerformance(); }
             else if (attemptCount === 2 && currentPin === forceUnlock) { 
                 status.innerText = ""; keypad.style.display = 'none'; container.style.display = 'none'; statusBar.style.display = 'none';
-                document.body.style.backgroundImage = "url('homescreen.jpg')"; // CHANGE THIS TO YOUR IMAGE NAME
+                document.body.style.backgroundImage = "url('IMG_1865.jpeg')"; 
                 document.body.style.backgroundSize = "cover"; document.body.style.backgroundPosition = "center";
             } else {
                 lastCaptured = currentPin; attemptCount++; container.classList.add('shake'); status.innerText = "Try Again"; status.classList.add('text-red-500');
