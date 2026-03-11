@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>Phone Unlock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            background-color: black; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .keypad-btn { background: rgba(255, 255, 255, 0.12); transition: background 0.1s; -webkit-tap-highlight-color: transparent; }
+        .keypad-btn:active { background: rgba(255, 255, 255, 0.35); }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-12px); }
+            40% { transform: translateX(12px); }
+            60% { transform: translateX(-12px); }
+            80% { transform: translateX(12px); }
+        }
+        .shake { animation: shake 0.4s ease-in-out; }
+        
+        .dot { border: 1.5px solid #888; transition: background 0.1s, transform 0.1s; }
+        .dot.filled { background: white; border-color: white; transform: scale(1.1); }
+    </style>
+</head>
+<body class="fixed inset-0 overflow-hidden select-none">
+
+    <div id="status" class="text-xl font-semibold mb-10 tracking-tight">Enter Passcode</div>
+
+    <div id="pin-container" class="flex gap-4 mb-20">
+        <div class="dot w-3.5 h-3.5 rounded-full"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full"></div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-x-7 gap-y-5">
+        <button onclick="press(1)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">1</span></button>
+        <button onclick="press(2)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">2</span><span class="text-[9px] font-bold text-gray-400">ABC</span></button>
+        <button onclick="press(3)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">3</span><span class="text-[9px] font-bold text-gray-400">DEF</span></button>
+        
+        <button onclick="press(4)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">4</span><span class="text-[9px] font-bold text-gray-400">GHI</span></button>
+        <button onclick="press(5)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">5</span><span class="text-[9px] font-bold text-gray-400">JKL</span></button>
+        <button onclick="press(6)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">6</span><span class="text-[9px] font-bold text-gray-400">MNO</span></button>
+        
+        <button onclick="press(7)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">7</span><span class="text-[9px] font-bold text-gray-400">PQRS</span></button>
+        <button onclick="press(8)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">8</span><span class="text-[9px] font-bold text-gray-400">TUV</span></button>
+        <button onclick="press(9)" class="keypad-btn w-20 h-20 rounded-full flex flex-col items-center justify-center"><span class="text-3xl">9</span><span class="text-[9px] font-bold text-gray-400">WXYZ</span></button>
+        
+        <div class="w-20 h-20"></div>
+        <button onclick="press(0)" class="keypad-btn w-20 h-20 rounded-full flex items-center justify-center"><span class="text-3xl">0</span></button>
+        <div class="w-20 h-20"></div>
+    </div>
+
+    <div class="mt-20 text-sm font-semibold text-gray-300">Emergency</div>
+
+    <script>
+        let currentPin = "";
+        let masterCode = "000000"; // Your secret reveal code (Now 6 digits)
+        let lastCaptured = "None";
+
+        function press(num) {
+            if (currentPin.length < 6) {
+                currentPin += num;
+                updateDots();
+                if (navigator.vibrate) navigator.vibrate(12);
+
+                if (currentPin.length === 6) {
+                    setTimeout(validate, 250);
+                }
+            }
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index < currentPin.length) dot.classList.add('filled');
+                else dot.classList.remove('filled');
+            });
+        }
+
+        function validate() {
+            const statusText = document.getElementById('status');
+            const pinContainer = document.getElementById('pin-container');
+
+            if (currentPin === masterCode) {
+                // Reveal the last spectator's input
+                alert("Spectator's Code: " + lastCaptured);
+                reset();
+            } else {
+                // Store the spectator's code and fail
+                lastCaptured = currentPin;
+                pinContainer.classList.add('shake');
+                statusText.innerText = "Try Again";
+                statusText.classList.add('text-red-500');
+                if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+
+                setTimeout(() => {
+                    pinContainer.classList.remove('shake');
+                    reset();
+                }, 500);
+            }
+        }
+
+        function reset() {
+            currentPin = "";
+            updateDots();
+            document.getElementById('status').innerText = "Enter Passcode";
+            document.getElementById('status').classList.remove('text-red-500');
+        }
+
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
